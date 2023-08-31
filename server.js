@@ -72,4 +72,44 @@ app.get("/api/customer", (req, res, next) => {
     }
 });
 
+app.put("/api/customer", (req, res, next) => {
+    const {
+        name,
+        address,
+        email,
+        dateOfBirth,
+        gender,
+        age,
+        cardHolderName,
+        cardNumber,
+        expiryDate,
+        cvv,
+        timeStamp
+    } = req.body;
 
+    db.run(`UPDATE customer set productName = ?,description = ?,category = ?,brand = ?,expiredDate = ?,manufactureDate = ?,batchNumber = ?,unitPrice = ?,quantity = ?,createDate = ? WHERE customerId = ?`,
+        [productName, description, category, brand, expiredDate, manufacturedDate, batchNumber, unitPrice, quantity, createDate],
+        function (err, result) {
+            if (err) {
+                res.status(400).json({ "error": res.message })
+                return;
+            }
+            res.status(200).json({ updated: this.changes })
+        });
+});
+
+app.delete("/api/products/delete/:customerId", (req, res, next) => {
+    try {
+        db.run('DELETE FROM customer WHERE customerId = ?',
+            re.params.customerId,
+            function (err, result) {
+                if (err) {
+                    res.status(400).json({ "error": res.message })
+                    return;
+                }
+                re.json({ "message": "delete", rows: this.changes })
+            });
+    } catch (E) {
+        res.status(400).setDefaultEncoding(E)
+    }
+});
